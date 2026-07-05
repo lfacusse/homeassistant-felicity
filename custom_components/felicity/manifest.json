@@ -1,0 +1,18 @@
+{
+  "domain": "felicity",
+  "name": "Felicity Solar",
+  "version": "0.0.1",
+  "config_flow": true,
+  "documentation": "https://github.com/lfacusse/homeassistant-felicity",
+  "issue_tracker": "https://github.com/lfacusse/homeassistant-felicity/issues",
+  "requirements": [
+    "cryptography>=45.0.0"
+  ],
+  "codeowners": [
+    "@lfacusse"
+  ],
+  "iot_class": "cloud_polling",
+  "loggers": [
+    "custom_components.felicity"
+  ]
+}
