@@ -1,11 +1,12 @@
 {
   "domain": "felicity",
   "name": "Felicity Solar",
-  "version": "0.0.1",
-  "config_flow": true,
+  "version": "0.1.0",
   "documentation": "https://github.com/lfacusse/homeassistant-felicity",
   "issue_tracker": "https://github.com/lfacusse/homeassistant-felicity/issues",
+  "config_flow": true,
   "requirements": [
+    "httpx>=0.28.0",
     "cryptography>=45.0.0"
   ],
   "codeowners": [

@@ -1,13 +1,18 @@
+"""Felicity sensors."""
+
+import logging
+
 from homeassistant.components.sensor import SensorEntity
 
 from .api import FelicityApi
 
+_LOGGER = logging.getLogger(__name__)
 
-async def async_setup_entry(
-    hass,
-    entry,
-    async_add_entities,
-):
+
+async def async_setup_entry(hass, entry, async_add_entities):
+    """Set up Felicity sensors."""
+
+    _LOGGER.warning("######## FELICITY SENSOR.PY LOADED ########")
 
     api = FelicityApi(
         entry.data["username"],
@@ -15,48 +20,84 @@ async def async_setup_entry(
         entry.data["device_sn"],
     )
 
-    await api.login()
-
     async_add_entities(
         [
             FelicityBatterySensor(api),
             FelicityPVSensor(api),
         ],
-        True,
+        update_before_add=True,
     )
 
 
 class FelicityBatterySensor(SensorEntity):
-
-    _attr_name = "Felicity Battery SOC"
-    _attr_unique_id = "felicity_soc"
+    """Battery SOC sensor."""
 
     def __init__(self, api):
         self.api = api
+        self._attr_name = "Felicity Battery SOC"
+        self._attr_unique_id = "felicity_battery_soc"
         self._attr_native_unit_of_measurement = "%"
+        self._attr_should_poll = True
+        self._value = None
+
+    @property
+    def native_value(self):
+        return self._value
 
     async def async_update(self):
+        """Update battery state."""
 
-        data = await self.api.get_latest()
+        try:
+            _LOGGER.warning("Battery: starting update")
 
-        latest = data["data"]["dataList"][0]
+            data = await self.api.get_latest()
 
-        self._attr_native_value = float(latest["emsSoc"])
+            _LOGGER.warning("Battery JSON: %s", data)
+
+            latest = data["data"]["dataList"][0]
+
+            self._value = float(latest["emsSoc"])
+
+            _LOGGER.warning("Battery state = %s", self._value)
+
+            
+
+        except Exception:
+            _LOGGER.exception("Battery update failed")
+            raise
 
 
 class FelicityPVSensor(SensorEntity):
-
-    _attr_name = "Felicity PV Power"
-    _attr_unique_id = "felicity_pv"
+    """PV Power sensor."""
 
     def __init__(self, api):
         self.api = api
+        self._attr_name = "Felicity PV Power"
+        self._attr_unique_id = "felicity_pv_power"
         self._attr_native_unit_of_measurement = "W"
+        self._attr_should_poll = True
+        self._value = None
+
+    @property
+    def native_value(self):
+        return self._value
 
     async def async_update(self):
+        """Update PV state."""
 
-        data = await self.api.get_latest()
+        try:
+            _LOGGER.warning("PV: starting update")
 
-        latest = data["data"]["dataList"][0]
+            data = await self.api.get_latest()
 
-        self._attr_native_value = float(latest["pvPower"])
+            latest = data["data"]["dataList"][0]
+
+            self._value = float(latest["pvPower"])
+
+            _LOGGER.warning("PV state = %s", self._value)
+
+            
+
+        except Exception:
+            _LOGGER.exception("PV update failed")
+            raise
