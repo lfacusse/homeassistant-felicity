@@ -160,31 +160,6 @@ class FelicityPVSensor(SensorEntity):
             _LOGGER.exception("PV update failed")
             raise
 
-class FelicityBatteryPowerSensor(SensorEntity):
-    """Battery Power sensor."""
-
-    def __init__(self, api):
-        self.api = api
-        self._attr_name = "Felicity Battery Power"
-        self._attr_unique_id = "felicity_battery_power"
-        self._attr_native_unit_of_measurement = "W"
-        self._attr_should_poll = True
-        self._value = None
-
-    @property
-    def native_value(self):
-        return self._value
-
-    async def async_update(self):
-        """Update battery power."""
-
-        try:
-            data = await self.api.get_latest()
-            latest = data["data"]["dataList"][0]
-            self._value = float(latest["emsPower"])
-        except Exception:
-            _LOGGER.exception("Battery Power update failed")
-            raise
 
 class FelicityBatteryPowerSensor(SensorEntity):
     """Battery Power sensor."""
@@ -211,7 +186,7 @@ class FelicityBatteryPowerSensor(SensorEntity):
 
             latest = data["data"]["dataList"][0]
 
-            self._value = float(latest["emsPower"])
+            self._value = -float(latest["emsPower"])
 
             _LOGGER.warning("Battery Power = %s", self._value)
 
