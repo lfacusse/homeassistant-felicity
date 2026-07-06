@@ -118,7 +118,7 @@ class FelicityHouseLoadSensor(SensorEntity):
         try:
             data = await self.api.get_latest()
             latest = data["data"]["dataList"][0]
-            self._value = float(latest["ctPower"])
+            self._value = float(latest["meterPower"])
         except Exception:
             _LOGGER.exception("House Load update failed")
             raise
@@ -150,7 +150,7 @@ class FelicityPVSensor(SensorEntity):
 
             _LOGGER.warning("LATEST JSON = %s", latest)
 
-            self._value = float(latest["pvPower"])
+            self._value = float(latest["pvTotalPower"])
 
             _LOGGER.warning("PV state = %s", self._value)
 
